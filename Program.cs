@@ -7,23 +7,34 @@ namespace veracodeAPI
 {
 	public class Program
 	{
-		//private const string AuthorizationHeader = "Authorization";
-		//private const string AuthorizationHeader = "'Content-Type': 'application/json'";
-		private const string AuthorizationHeader = "Authorization";
-        private const string ApiId = "c4b040564dcbaeff63962baf74799fb6";
-        private const string ApiKey = "250d32e49d3876d84ca8c3c24b972ca567507d177a2c5b563a10b6b41baa64831cb5df1f59652fb1fc9763d77cbe61dc5974b9cc36b3e5951c00c29a690aa23e";
-
-		//Pour utiliser les API XML
-		//const string urlBase = "analysiscenter.veracode.eu";
-		//Pour utiliser les API REST
-		const string urlBase = "api.veracode.eu";
-
 		public static void Main(string[] args)
 		{
 			try
 			{
-				getAppList();
+				//Console.ReadLine();
 
+				bool showMenuType = true;
+				while(showMenuType)
+				{
+					Console.Clear();
+					Console.WriteLine("XML or REST ?");
+					Console.Write("\r\nSelect an option: ");
+					switch(Console.ReadLine())
+					{
+						case "XML":
+							showMenuType = MainMenuXML();
+							break;
+						case "REST":
+							showMenuType = MainMenuRest();
+							break;
+						default:
+							Console.WriteLine("Bye !");
+							showMenuType = false;
+							break;
+					}
+					Console.WriteLine("Press any key to continue.");
+					Console.ReadKey();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -36,35 +47,96 @@ namespace veracodeAPI
 			}
 		}
 
-		private static JObject convertToJSON(string stringToTransform)
+		private static bool MainMenuXML()
 		{
-			JObject json = JObject.Parse(stringToTransform);
-			return json;
+			apiActionXml apiXml = new apiActionXml();
+
+			bool showMenuAction = true;
+			while(showMenuAction)
+			{
+				Console.Clear();
+				Console.WriteLine("Choose an option");
+				Console.WriteLine("1) GetAppList");
+				Console.WriteLine("2) ");
+				Console.WriteLine("3) ");
+				Console.Write("\r\nSelect an option: ");
+
+				switch(Console.ReadLine())
+				{
+					case "1":
+						apiXml.getAppList();
+						showMenuAction = true;
+						break;
+					case "2":
+						showMenuAction = true;
+						break;
+					case "3":
+						showMenuAction = true;
+						break;
+					default:
+						showMenuAction = false;
+						break;
+				}
+				if(showMenuAction == true)
+				{
+					Console.WriteLine("Press any key to continue.");
+					Console.ReadKey();
+				}
+			}
+			return true;
 		}
 
-		private static void getAppList()
+		private static bool MainMenuRest()
 		{
-			//Pour utiliser les API XML
-			//const string urlPath = "/api/5.0/getapplist.do";
-			//Pour utiliser les API REST
-			const string urlPath = "/appsec/v1/applications/?page=0&size=50";
+			apiActionRest apiRest = new apiActionRest();
 
-            const string httpVerb = "GET";
-			string urlParams = string.Empty;
 
-			using var httpClient = new HttpClient();
-			var request = new HttpRequestMessage(HttpMethod.Get, "https://"+urlBase+urlPath);
+			bool showMenuAction = true;
+			while(showMenuAction)
+			{
+				Console.Clear();
+				Console.WriteLine("Choose an option");
+				Console.WriteLine("1) GetAppList");
+				Console.WriteLine("2) GetAppListTag (Disabled)");
+				Console.WriteLine("3) GetAppListByComplianceStatus");
+				Console.WriteLine("4) GetAppListByCustomFields");
+				Console.WriteLine("5) GetAppListbyLastPolicyEvaluation (Disabled)");
+				Console.WriteLine("6) ");
+				Console.Write("\r\nSelect an option: ");
 
-            var authorization = HmacAuthHeader.HmacSha256.CalculateAuthorizationHeader(ApiId, ApiKey, urlBase, urlPath, urlParams, httpVerb);
-
-			request.Headers.Add(AuthorizationHeader, authorization);
-			//request.Headers.Add("Content-Type", "application/json");
-
-            var response = httpClient.Send(request);
-			var reader = new StreamReader(response.Content.ReadAsStream());
-			var responseBody = reader.ReadToEnd();
-
-            Console.WriteLine(responseBody);
+				switch(Console.ReadLine())
+				{
+					case "1":
+						apiRest.getAppList();
+						showMenuAction = true;
+						break;
+					case "2":
+						apiRest.getAppListTag();
+						showMenuAction = true;
+						break;
+					case "3":
+						apiRest.getAppListByComplianceStatus(null);
+						showMenuAction = true;
+						break;
+					case "4":
+						apiRest.getAppListByCustomFields(null, null);
+						showMenuAction = true;
+						break;
+					case "5":
+						apiRest.getAppListbyLastPolicyEvaluation();
+						showMenuAction = true;
+						break;
+					default:
+						showMenuAction = false;
+						break;
+				}
+				if(showMenuAction == true)
+				{
+					Console.WriteLine("Press any key to continue.");
+					Console.ReadKey();
+				}
+			}
+			return true;
 		}
 	}
 }
