@@ -101,7 +101,9 @@ namespace veracodeAPI
 				Console.WriteLine("3) GetAppListByComplianceStatus");
 				Console.WriteLine("4) GetAppListByCustomFields");
 				Console.WriteLine("5) GetAppListbyLastPolicyEvaluation (Disabled)");
-				Console.WriteLine("6) ");
+				Console.WriteLine("6) GetIdOfProject");
+				Console.WriteLine("7) ViewPipelineScanDetails");
+				Console.WriteLine("8) viewApplicationDetails");
 				Console.Write("\r\nSelect an option: ");
 
 				switch(Console.ReadLine())
@@ -124,6 +126,18 @@ namespace veracodeAPI
 						break;
 					case "5":
 						apiRest.getAppListbyLastPolicyEvaluation();
+						showMenuAction = true;
+						break;
+					case "6":
+						apiRest.getIdOfProjects();
+						showMenuAction = true;
+						break;
+					case "7":
+						apiRest.viewPipelineScanDetails(null);
+						showMenuAction = true;
+						break;
+					case "8":
+						apiRest.viewApplicationDetails(null);
 						showMenuAction = true;
 						break;
 					default:

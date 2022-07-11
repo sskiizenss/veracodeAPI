@@ -10,19 +10,19 @@ namespace veracodeAPI
         private const string AuthorizationHeader = "Authorization";
         private const string urlBase = "api.veracode.eu";
         private string urlParams = string.Empty;
-        private const string ApiId = "c4b040564dcbaeff63962baf74799fb6";
-        private const string ApiKey = "250d32e49d3876d84ca8c3c24b972ca567507d177a2c5b563a10b6b41baa64831cb5df1f59652fb1fc9763d77cbe61dc5974b9cc36b3e5951c00c29a690aa23e";
+        private const string ApiId = "APIID";
+        private const string ApiKey = "APIKEY";
 
         //Permet de récupérer une la liste des applications
-        public void getAppList()
+        public string getAppList()
         {
             string response = makeAction("/appsec/v1/applications/?page=0&size=50", "GET");
-            //Console.WriteLine(response);
+            Console.WriteLine(response);
 
-            transformJSON(response);
+            return response;
         }
 
-        //Doesn't work ATM
+        // ! Doesn't work ATM
         public void getAppListTag()
         {
             //Console.Write("Tags (separated by ','):");
@@ -61,7 +61,7 @@ namespace veracodeAPI
             }
         }
 
-        //Ne fonctionne pas
+        // ! Ne fonctionne pas
         public void getAppListbyLastPolicyEvaluation()
         {
             //yyyy-mm-ddThh:mm:ss.000Z
@@ -70,8 +70,59 @@ namespace veracodeAPI
             Console.WriteLine(response);
         }
 
+        ///////////////////////////////////////////////////
+        // * Permet de récupérer les ID des projets
+        ///////////////////////////////////////////////////
+        public void getIdOfProjects()
+        {
+            string jsonAppList = getAppList();   
+            dynamic data = JObject.Parse(jsonAppList);
 
-        //Effectue la requête veracode et récupére le résultat
+            for(int x=0 ; x < data._embedded.applications.Count ; x++)
+            {
+                Console.Write(data._embedded.applications[x].profile.name+": ");
+                Console.WriteLine(data._embedded.applications[x].id);
+            }
+        }
+
+        ///////////////////////////////////////////////////
+        // * Permet de récupérer l'ID d'un projet en fonction de son nom
+        ///////////////////////////////////////////////////
+        public void getIdOfProject(string? idProjet)
+        {
+
+        }
+
+        ///////////////////////////////////////////////////
+        // * Permet d'afficher le détail des vulnérabilités d'un scan
+        // ! Ne fonctionne pas, impossible de récupérer les données de l'API sur un scan prédéfini
+        ///////////////////////////////////////////////////
+        public void viewPipelineScanDetails(string? scan_id)
+        {
+            Console.Write("Scan Id: ");
+            scan_id = Console.ReadLine();
+
+            //string response = makeAction("/pipeline_scan/v1/scans/"+scan_id, "GET");
+            //string response = makeAction("/appsec/v2/applications/"+scan_id+"/findings?scan_type=STATIC", "GET");
+            string response = makeAction("/appsec/v2/applications/"+scan_id+"/findings?include_annot=TRUE", "GET");
+            Console.WriteLine(response);
+        }
+
+        ///////////////////////////////////////////////////
+        // * Permet d'afficher les détails d'une application
+        ///////////////////////////////////////////////////
+        public void viewApplicationDetails(string? project_id)
+        {
+            Console.Write("Application id: ");
+            project_id = Console.ReadLine();
+
+            string response = makeAction("/appsec/v1/applications/?legacy_id="+project_id, "GET");
+            Console.WriteLine(response);
+        }
+
+        ///////////////////////////////////////////////////
+        // * Effectue la requête veracode et récupére le résultat
+        ///////////////////////////////////////////////////
         private string makeAction(string urlPath, string httpVerb)
         {
             string urlParams = string.Empty;
